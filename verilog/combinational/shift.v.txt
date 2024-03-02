@@ -1,0 +1,15 @@
+`timescale 1ns / 1ps
+
+module shift(
+    input [7:0]a1,[7:0]a2,
+    input [7:0]b1,[7:0]b2,
+    output [7:0]a1_res,[7:0]a2_res,
+    output [7:0]b1_res,[7:0]b2_res
+    );
+    
+    assign a1_res = a1 << 1;
+    assign a2_res = a2 << 2;
+    assign b1_res = b1 >> 1;
+    assign b2_res = b2 >> 2;
+    
+endmodule

@@ -1,0 +1,22 @@
+`timescale 1ns / 1ps
+
+module decoder_4x16_tb(
+
+    );
+    
+    reg x0,x1,x2,x3;
+    wire y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15;
+    
+    decoder_4x16 dut(x0,x1,x2,x3,y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15);
+    
+    initial
+    begin: stimulus
+    reg [4:0] i;
+    for (i = 0; i < 16; i = i + 1)
+      begin 
+        {x3,x2,x1,x0} = i;
+        #1 $display ("x3x2x1x0 = %b", {x3,x2,x1,x0});
+      end
+    end
+    
+endmodule

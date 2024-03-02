@@ -1,0 +1,64 @@
+`timescale 1ns / 1ps
+
+module comparator(                  // a < b means L
+    input a,b,enable,               // a > b means G
+    output L,E,G
+    );
+    
+    xnor (net1,a,b);
+    and (E,net1,enable);
+    and (G,a,~b,enable);
+    and (L,~a,b,enable); 
+    
+endmodule
+
+module comparator_16_bit(
+    input [15:0] a,b,
+    input enable,
+    output L,E,G
+    
+    );
+    
+
+    wire [15:0] B;
+    wire [15:0] l,g;
+    
+    comparator inst15 (a[15],b[15],enable,l[15],B[15],g[15]);
+    comparator inst14 (a[14],b[14],B[15],l[14],B[14],g[14]);
+    comparator inst13 (a[13],b[13],B[14],l[13],B[13],g[13]);
+    comparator inst12 (a[12],b[12],B[13],l[12],B[12],g[12]);
+    
+    comparator inst11 (a[11],b[11],B[12],l[11],B[11],g[11]);
+    comparator inst10 (a[10],b[10],B[11],l[10],B[10],g[10]);
+    comparator inst9 (a[9],b[9],B[10],l[9],B[9],g[9]);
+    comparator inst8 (a[8],b[8],B[9],l[8],B[8],g[8]);
+    
+    comparator inst7 (a[7],b[7],B[8],l[7],B[7],g[7]);
+    comparator inst6 (a[6],b[6],B[7],l[6],B[6],g[6]);
+    comparator inst5 (a[5],b[5],B[6],l[5],B[5],g[5]);
+    comparator inst4 (a[4],b[4],B[5],l[4],B[4],g[4]);
+    
+    comparator inst3 (a[3],b[3],B[4],l[3],B[3],g[3]);
+    comparator inst2 (a[2],b[2],B[3],l[2],B[2],g[2]);
+    comparator inst1 (a[1],b[1],B[2],l[1],B[1],g[1]);
+    comparator inst0 (a[0],b[0],B[1],l[0],E,g[0]);
+    
+    or (L,l[15],l[14],l[13],l[12],l[11],l[10],l[9],l[8],l[7],l[6],l[5],l[4],l[3],l[2],l[1],l[0]);
+    or (G,g[15],g[14],g[13],g[12],g[11],g[10],g[9],g[8],g[7],g[6],g[5],g[4],g[3],g[2],g[1],g[0]);
+    
+endmodule     
+
+module comparator_32_bit(
+    input [31:0] a , b,
+    output L,E,G
+    );
+    wire L0,L1,G0,G1,E0,E1;
+    reg enb = 1'b1;
+    
+    comparator_16_bit comp_31x16 (a[31:16],b[31:16],enb,L0,E0,G0);
+    comparator_16_bit comp_15x0 (a[15:0],b[15:0],E0,L1,E,G1);
+    
+    or (L,L0,L1);
+    or (G,G0,G1);
+    
+endmodule

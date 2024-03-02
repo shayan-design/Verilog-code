@@ -1,0 +1,62 @@
+`timescale 1ps / 1ps   // remember in this code I will define timescale in 1ps not 1ns 
+
+module D_flop_tb();
+    
+    reg T,clk,preset,clear,select;
+    wire [3:0]Q,Q_not;
+    
+    mod_counter_up_down dut (T,preset,clear,clk,select,Q,Q_not);
+    
+    initial
+    begin
+      clk = 1'b0;
+      forever
+        #500 clk = ~clk;
+    end
+    
+    initial 
+    begin
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b1;
+      
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      #1000 T = 1'b1; preset = 1'b0; clear = 1'b0; select = 1'b0;
+      
+      #10 $stop;
+    end
+    
+endmodule

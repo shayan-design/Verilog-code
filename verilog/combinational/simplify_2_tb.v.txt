@@ -1,0 +1,22 @@
+`timescale 1ns / 1ps
+
+module simplify_2_tb(
+
+    );
+    
+    reg x1,x2,x3,x4,x5;
+    wire y;
+    
+    simplify_2 dut(x1,x2,x3,x4,x5,y);
+    initial 
+      begin: apply_stimulus
+        reg [4:0] i;
+          for (i = 0 ; i < 32 ; i = i + 1)
+            begin
+              {x5,x1,x2,x3,x4} = i [4:0];
+              #1 $display ("x1x2x3x4x5 = %b, y = %b", {x1,x2,x3,x4,x5} , y );
+            end
+        #1 $stop;
+      end
+    
+endmodule

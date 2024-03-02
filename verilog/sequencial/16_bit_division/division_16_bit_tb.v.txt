@@ -1,0 +1,75 @@
+`timescale 1ns / 1ps
+
+module division_16_bit_tb(
+
+    );
+    
+    reg [15:0] a,b;
+    reg clk,preset,clear,Trig;
+    wire [31:0] c;
+    wire [15:0] rslt;       // rslt = remainder 
+    wire [15:0] div_rslt;
+    wire L,E,G;
+    
+    
+    division_16_bit dut (a,b,clk,preset,clear,Trig,c,rslt,div_rslt,L,E,G);
+    
+    initial
+    begin
+      clk = 1'b0;
+      forever #5 clk = ~clk;
+    end
+    
+    initial 
+    begin
+      #0 a = 16'hf4a0; b = 16'h0013; preset = 1'b0; clear = 1'b0; 
+      #10 Trig = 1'b0;
+      #10 Trig = 1'b1;
+      #10 Trig = 1'b0;
+      #210;
+      
+      #10 a = 16'hdfa0; b = 16'h0013;
+      #10 Trig = 1'b1;
+      #10 Trig = 1'b0; 
+      #210;
+      
+      #10 a = 16'hddd0; b = 16'hddd0; 
+      #100 Trig = 1'b1;
+      #10 Trig = 1'b0;
+      #210;
+      
+      #10 a = 16'h7842; b = 16'h0099; 
+      #100 Trig = 1'b1;
+      #10 Trig = 1'b0;
+      #210;
+      
+      #10 a = 16'hfeac; b = 16'h0089; 
+      #100 Trig = 1'b1;
+      #10 Trig = 1'b0;
+      #210;
+      
+      #10 a = 16'hcbac; b = 16'h0017; 
+      #100 Trig = 1'b1;
+      #10 Trig = 1'b0;
+      #210;
+      
+      #10 a = 16'hb8ac; b = 16'h0023; 
+      #100 Trig = 1'b1;
+      #10 Trig = 1'b0;
+      #210;
+      
+      #10 a = 16'hff78; b = 16'h0523; 
+      #100 Trig = 1'b1;
+      #10 Trig = 1'b0;
+      #210;
+      
+      #10 a = 16'h6565; b = 16'h0003; 
+      #100 Trig = 1'b1;
+      #10 Trig = 1'b0;
+      #210;
+      
+      #30 $stop;
+      
+    end
+   
+endmodule

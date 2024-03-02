@@ -1,0 +1,21 @@
+`timescale 1ns / 1ps
+
+module multiplier_32_bit_tb(
+
+    );
+   
+    reg [15:0] a , b;
+    wire [31:0] prod ;
+    
+    multiplier_32_bit dut (a , b , prod);
+    
+    initial 
+    begin
+     #0 a = 16'hffff; b = 16'hffff;
+     #10 a = 16'h2690; b = 16'h4394;
+     #10 a = 16'hfbcf; b = 16'hffff;
+     #10 a = 16'h2cbc; b = 16'h4394;
+     #10 $stop;
+    end
+    
+endmodule

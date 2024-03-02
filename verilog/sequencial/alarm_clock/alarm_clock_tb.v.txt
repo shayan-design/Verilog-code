@@ -1,0 +1,49 @@
+`timescale 1ns / 1ps
+
+module alarm_clock_tb(
+
+    );
+    
+    reg load,clk,preset,clear,alarm_set,close;
+    reg [3:0] clock_sec_one,clock_min_one;
+    reg [4:0] clock_hour_one;
+    reg [2:0] clock_sec_ten,clock_min_ten;
+    wire [3:0] sec_one_instant,min_one_instant;
+    wire [2:0] sec_ten_instant,min_ten_instant;
+    wire [3:0] hour_one;
+    wire [1:0] hour_ten;
+    wire ring;
+    
+    alarm_clock dut (load,clk,preset,clear,alarm_set,close,
+                 clock_sec_one,clock_min_one,clock_hour_one,clock_sec_ten,clock_min_ten,
+                 sec_one_instant,min_one_instant,sec_ten_instant,min_ten_instant,hour_one,
+                 hour_ten,ring);
+    
+    initial
+    begin
+      clk = 1'b0;
+      forever #5 clk = ~clk; 
+    end
+    
+    initial
+    begin
+      #0 preset = 1'b0; clear = 1'b0; load = 1'b0; alarm_set = 1'b0; close = 1'b0;
+      #10 ;
+      #10 ;
+      #10 ;
+      #10 ;
+      
+      #10 alarm_set = 1'b1; clock_sec_one = 4'b0111; clock_sec_ten = 3'b010; clock_min_one = 4'b0111; clock_min_ten = 3'b001; clock_hour_one = 5'b00000;
+      #10 alarm_set = 1'b1; clock_sec_one = 4'b0110; clock_sec_ten = 3'b011; clock_min_one = 4'b0101; clock_min_ten = 3'b010; clock_hour_one = 5'b00000;
+      #10 ;
+      #10 ;
+      #10 alarm_set = 1'b0;
+      #16000 close = 1'b1; 
+      #10 close = 1'b0;
+      #10 alarm_set = 1'b1; clock_sec_one = 4'b0111; clock_sec_ten = 3'b010; clock_min_one = 4'b0111; clock_min_ten = 3'b001; clock_hour_one = 5'b00001;
+      #10 alarm_set = 1'b0;
+      #30000 close = 1'b1;
+      #10 close = 1'b0;
+    end
+    
+endmodule

@@ -1,0 +1,21 @@
+`timescale 1ns / 1ps
+
+module BCD_counter_tb(
+
+    );
+    
+    reg [4:0] Q;
+    wire a,b,c,d,e,f,g;   
+    
+    BCD_counter dut (Q,a,b,c,d,e,f,g);
+    
+    initial
+    begin
+      for (Q = 0; Q < 16; Q = Q + 1)
+      begin
+        #10 $display ("Q = %b",Q);
+      end
+      #1 $stop;
+    end
+    
+endmodule

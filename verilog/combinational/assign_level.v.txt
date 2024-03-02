@@ -1,0 +1,10 @@
+`timescale 1ns / 1ps
+
+module test_red(input [3:0] a, 
+                output and_red,or_red,xor_red);
+           
+  assign and_red = ~&a,
+         or_red  = ~|a,
+         xor_red = ~^a;      
+                
+endmodule

@@ -1,0 +1,419 @@
+`timescale 1ns / 1ps  
+
+module hour_BCD (
+    input [4:0] a,
+    output [1:0] hour_ten,
+    output [3:0] hour_one 
+    );
+    
+    assign hour_one[0] = a[0];
+    assign hour_one[1] = (a[3] & a[2] & ~a[1]) | (~a[3] & a[2] & a[1]) | 
+                         (~a[4] & ~a[3] & a[1]) | (a[4] & ~a[3] & ~a[2] & ~a[1]);  
+    assign hour_one[2] = (~a[4] & ~a[3] & a[2]) | (a[3] & a[2] & a[1]) | 
+                         (a[4] & ~a[2] & ~a[1]); 
+    assign hour_one[3] = (a[3] & ~a[2] & ~a[1]) | (a[4] & ~a[3] & ~a[2] & a[1]);
+    assign hour_ten[0] = (a[3] & a[2]) | (a[3] & a[1]) | 
+                         (a[4] & ~a[3] & ~a[2]);
+    assign hour_ten[1] = (a[4] & a[2]) ;
+endmodule
+
+module D_FF_new(
+    input wire D,clk,preset,clear,
+    output reg Q,Qn
+    );
+    
+    initial 
+    begin
+      Q = 0;
+      Qn = 1;
+    end
+    
+    always @ ( clk or preset or clear or D)
+    begin
+      if (clk == 1 && preset == 1 && clear == 0)
+        begin
+          Q <= #2 1;
+          Qn <= #2 0;
+        end
+        
+      else if (clk == 1 && preset == 0 && clear == 1)
+        begin
+          Q <= #2 0;
+          Qn <= #2 1;
+        end
+      else if (clk == 1 && preset == 1 && clear == 1)
+        begin
+          Q <= #2 1'b0;
+          Qn <= #2 1'b1;
+        end
+      else if (clk == 1 && preset == 0 && clear == 0)
+        begin
+          Q <= #2 D;
+          Qn <= #2 ~D;
+        end
+        
+      else if (clk == 0 && preset == 1 && clear == 0)
+        begin
+          Q <= #2 1;
+          Qn <= #2 0;
+        end
+        
+      else if (clk == 0 && preset == 0 && clear == 1)
+        begin
+          Q <= #2 0;
+          Qn <= #2 1;
+        end
+      else if (clk == 0 && preset == 1 && clear == 1)
+        begin
+          Q <= #2 1'b0;
+          Qn <= #2 1'b1;
+        end
+        
+    end
+endmodule
+   
+module D_flop (
+    input D,clk,preset,clear,
+    output Q,Q_not 
+    );
+    
+    wire net1,Qn;
+    D_FF_new master (D,~clk,preset,clear,net1,Qn);
+    D_FF_new slave (net1,clk,preset,clear,Q,Q_not); 
+    
+endmodule
+
+module T_FF (
+    input T,clk,preset,clear,
+    output Q
+    );
+    
+    wire Q_not;
+    wire D; 
+    xor (D,T,Q);
+    D_flop inst6 (D,clk,preset,clear,Q,Q_not);
+    
+endmodule
+
+module D_FF_reg (
+    input a,b, 
+    input load,clk,preset,clear,
+    output Q
+    );
+    
+    wire D , Q_not;
+    
+    and (net1,load,a);
+    and (net2,~load,b);
+    or (D,net1,net2);
+    
+    D_flop inst1 (D,clk,preset,clear, Q,Q_not );
+    
+endmodule
+
+module D_FF_PIPO (
+    input [3:0] a, 
+    input load,clk,preset,clear,
+    output [3:0] Q
+    );
+    
+    wire [3:0] D, Q_not;
+    
+    and (net1,load,a[0]);
+    and (net2,~load,Q[0]);
+    or (D[0],net1,net2);
+    
+    and (net3,load,a[1]);
+    and (net4,~load,Q[1]);
+    or (D[1],net3,net4);
+    
+    and (net5,load,a[2]);
+    and (net6,~load,Q[2]);
+    or (D[2],net5,net6);
+    
+    and (net7,load,a[3]);
+    and (net8,~load,Q[3]);
+    or (D[3],net7,net8);
+    
+    D_flop inst0 (D[0],clk,preset,clear, Q[0],Q_not[0]);
+    D_flop inst1 (D[1],clk,preset,clear, Q[1],Q_not[1]);
+    D_flop inst2 (D[2],clk,preset,clear, Q[2],Q_not[2]);
+    D_flop inst3 (D[3],clk,preset,clear, Q[3],Q_not[3]);
+    
+endmodule
+
+module D_FF_PIPO_hour (
+    input [4:0] a, 
+    input load,clk,preset,clear,
+    output [4:0] Q
+    );
+    
+    wire [4:0] D, Q_not;
+    
+    and (net1,load,a[0]);
+    and (net2,~load,Q[0]);
+    or (D[0],net1,net2);
+    
+    and (net3,load,a[1]);
+    and (net4,~load,Q[1]);
+    or (D[1],net3,net4);
+    
+    and (net5,load,a[2]);
+    and (net6,~load,Q[2]);
+    or (D[2],net5,net6);
+    
+    and (net7,load,a[3]);
+    and (net8,~load,Q[3]);
+    or (D[3],net7,net8);
+    
+    and (net9,load,a[4]);
+    and (net10,~load,Q[4]);
+    or (D[4],net7,net8);
+    
+    D_flop inst0 (D[0],clk,preset,clear, Q[0],Q_not[0]);
+    D_flop inst1 (D[1],clk,preset,clear, Q[1],Q_not[1]);
+    D_flop inst2 (D[2],clk,preset,clear, Q[2],Q_not[2]);
+    D_flop inst3 (D[3],clk,preset,clear, Q[3],Q_not[3]);
+    D_flop inst4 (D[4],clk,preset,clear, Q[4],Q_not[4]);
+    
+endmodule
+
+module D_FF_PIPO_3 (
+    input [2:0] a, 
+    input load,clk,preset,clear,
+    output [2:0] Q
+    );
+    
+    wire [2:0] D, Q_not;
+    
+    and (net1,load,a[0]);
+    and (net2,~load,Q[0]);
+    or (D[0],net1,net2);
+    
+    and (net3,load,a[1]);
+    and (net4,~load,Q[1]);
+    or (D[1],net3,net4);
+    
+    and (net5,load,a[2]);
+    and (net6,~load,Q[2]);
+    or (D[2],net5,net6);
+    
+    D_flop inst0 (D[0],clk,preset,clear, Q[0],Q_not[0]);
+    D_flop inst1 (D[1],clk,preset,clear, Q[1],Q_not[1]);
+    D_flop inst2 (D[2],clk,preset,clear, Q[2],Q_not[2]);
+    
+endmodule
+
+module mod_10_count(
+    input load,clk,preset,clear,
+    input [3:0] clock_set,
+    output [3:0] Q
+    );
+    
+    wire [3:0] Q_not;
+    wire [3:0] D;
+ 
+    assign D[0] = ~Q[0];
+    assign D[1] = (Q[1] & ~Q[0]) | (~Q[3] & ~Q[1] & Q[0]);
+    assign D[2] = (Q[2] & ~Q[1]) | (Q[2] & ~Q[0]) | (~Q[3] & ~Q[2] & Q[1] & Q[0]);
+    assign D[3] = (Q[3] & ~Q[0]) | (Q[2] & Q[1] & Q[0]);
+    
+    D_FF_reg inst0 (clock_set[0],D[0],load,clk,preset,clear,Q[0]);
+    D_FF_reg inst1 (clock_set[1],D[1],load,clk,preset,clear,Q[1]);
+    D_FF_reg inst2 (clock_set[2],D[2],load,clk,preset,clear,Q[2]);
+    D_FF_reg inst3 (clock_set[3],D[3],load,clk,preset,clear,Q[3]);
+    
+endmodule
+
+module mod_6_count(
+    input load,clk,preset,clear,
+    input [2:0] clock_set,
+    output [2:0] Q
+    );
+    
+    wire [2:0] Q_not;
+    wire [2:0] D; 
+    
+    assign D[0] = ~Q[0];
+    assign D[1] = (Q[1] & ~Q[0]) | (~Q[2] & ~Q[1] & Q[0]);
+    assign D[2] = (Q[2] & ~Q[1] & ~Q[0]) | (~Q[2] & Q[1] & Q[0]);
+    
+    D_FF_reg inst0 (clock_set[0],D[0],load,clk,preset,clear,Q[0]);
+    D_FF_reg inst1 (clock_set[1],D[1],load,clk,preset,clear,Q[1]);
+    D_FF_reg inst2 (clock_set[2],D[2],load,clk,preset,clear,Q[2]);
+     
+endmodule
+
+
+module hour_count (
+    input load,clk,preset,clear,
+    input [4:0] clock_set,
+    output [4:0] Q 
+    );
+    
+    wire [4:0] Q_not;
+    wire [4:0] D;
+    
+    assign D[0] = ~Q[0];
+    assign D[1] = (Q[1] & ~Q[0]) | ( ~Q[1] & Q[0]);
+    assign D[2] = (Q[2] & ~Q[0]) | (Q[2] & ~Q[1]) | (~Q[2] & Q[1] & Q[0]);
+    assign D[3] = (Q[3] & ~Q[2]) | (Q[3] & ~Q[1]) | (Q[3] & ~Q[0]) | 
+                  (~Q[4] & ~Q[3] & Q[2] & Q[1] & Q[0]);
+    assign D[4] = (Q[4] & ~Q[3] & ~Q[2]) | (Q[4] & ~Q[3] & ~Q[1]) | (Q[4] & ~Q[3] & ~Q[0]) | 
+                  (Q[3] & Q[2] & Q[1] & Q[0]);
+                  
+    D_FF_reg inst0 (clock_set[0],D[0],load,clk,preset,clear,Q[0]);
+    D_FF_reg inst1 (clock_set[1],D[1],load,clk,preset,clear,Q[1]);
+    D_FF_reg inst2 (clock_set[2],D[2],load,clk,preset,clear,Q[2]);
+    D_FF_reg inst3 (clock_set[3],D[3],load,clk,preset,clear,Q[3]);
+    D_FF_reg inst4 (clock_set[4],D[4],load,clk,preset,clear,Q[4]);
+    
+endmodule
+
+module alarm_clock (
+    input load,clk,preset,clear,alarm_set,close,
+    input [3:0] clock_sec_one,clock_min_one,
+    input [4:0] clock_hour_one,
+    input [2:0] clock_sec_ten,clock_min_ten,
+    output [3:0] sec_one_instant,min_one_instant,
+    output [2:0] sec_ten_instant,min_ten_instant,
+    output [3:0] hour_one,
+    output [1:0] hour_ten,
+    output ring
+    );
+    wire clk_1,clk_2,clk_3,clk_4;
+    wire [4:0] hour_bit,hour_instant;
+    wire [3:0] sec_one_set,min_one_set,sec_one,min_one;
+    wire [2:0] sec_ten_set,min_ten_set,sec_ten,min_ten;
+    wire [4:0] hour_set;
+    wire [3:0] hour_one_set;
+    wire [1:0] hour_ten_set;
+    
+    reg data_TT = 1'b1;
+    reg ring_in;
+
+    /* Second instantiation */
+    mod_10_count inst0 (load,clk,preset,clear,clock_sec_one,sec_one);
+    assign clk_1 = ((~sec_one[0] & ~sec_one[1] & ~sec_one[2]& ~sec_one[3]) & ~load) | (clk & load);
+    mod_6_count inst1 (load,clk_1,preset,clear,clock_sec_ten,sec_ten);
+    
+    /* Minute instantiation */
+    assign clk_2 = ((~sec_ten[0] & ~sec_ten[1] & ~sec_ten[2]) & ~load) | (clk & load);
+    mod_10_count inst2 (load,clk_2,preset,clear,clock_min_one,min_one);
+    assign clk_3 = ((~min_one[0] & ~min_one[1] & ~min_one[2]& ~min_one[3]) & ~load) | (clk & load);
+    mod_6_count inst3 (load,clk_3,preset,clear,clock_min_ten,min_ten);
+    
+    /* Hour instantiation */
+    assign clk_4 = ((~min_ten[0] & ~min_ten[1] & ~min_ten[2]) & ~load) | (clk & load);
+    hour_count inst4 (load,clk_4,preset,clear,clock_hour_one,hour_bit);
+    
+    /* alarm clock setting */
+    
+    /* second instantiation */
+    D_FF_PIPO inst6 (clock_sec_one,alarm_set,clk,preset,clear,sec_one_set);
+    D_FF_PIPO_3 inst7 (clock_sec_ten,alarm_set,clk,preset,clear,sec_ten_set);
+    
+    /* minute instantiation */
+    D_FF_PIPO inst8 (clock_min_one,alarm_set,clk,preset,clear,min_one_set);
+    D_FF_PIPO_3 inst9 (clock_min_ten,alarm_set,clk,preset,clear,min_ten_set);
+    
+    /* hour instantiation */
+    D_FF_PIPO_hour inst10 (clock_hour_one,alarm_set,clk,preset,clear,hour_set);
+    hour_BCD inst11 (hour_set, hour_ten_set , hour_one_set);
+    
+    always@ (hour_bit or hour_set or min_ten_set or min_ten or min_one_set or min_one or sec_ten_set or sec_ten or sec_one_set or sec_one) 
+    begin
+      if (hour_set == hour_bit && min_ten_set == min_ten && min_one_set == min_one && sec_ten_set == sec_ten && sec_one_set == sec_one)
+        begin
+          ring_in = 1'b1;
+        end
+      else 
+        begin
+          ring_in = 1'b0;
+        end
+    end
+    
+    /* Hour instantiation */
+    and (net10,hour_bit[0],~alarm_set);
+    and (net11,hour_set[0],alarm_set);
+    or  (hour_instant[0],net10,net11);
+    
+    and (net13,hour_bit[1],~alarm_set);
+    and (net14,hour_set[1],alarm_set);
+    or  (hour_instant[1],net13,net14);
+    
+    and (net16,hour_bit[2],~alarm_set);
+    and (net17,hour_set[2],alarm_set);
+    or  (hour_instant[2],net16,net17);
+    
+    and (net19,hour_bit[3],~alarm_set);
+    and (net20,hour_set[3],alarm_set);
+    or  (hour_instant[3],net19,net20);
+    
+    and (net22,hour_bit[4],~alarm_set);
+    and (net23,hour_set[4],alarm_set);
+    or  (hour_instant[4],net22,net23);
+    hour_BCD inst5 (hour_instant, hour_ten, hour_one);
+    
+    /* minute instantiation */
+    and (net25,min_ten[0],~alarm_set);
+    and (net26,min_ten_set[0],alarm_set);
+    or  (min_ten_instant[0],net25,net26);
+    
+    and (net27,min_ten[1],~alarm_set);
+    and (net28,min_ten_set[1],alarm_set);
+    or  (min_ten_instant[1],net27,net28);
+    
+    and (net29,min_ten[2],~alarm_set);
+    and (net30,min_ten_set[2],alarm_set);
+    or  (min_ten_instant[2],net29,net30);
+    
+    and (net31,min_one[0],~alarm_set);
+    and (net32,min_one_set[0],alarm_set);
+    or  (min_one_instant[0],net31,net32);
+    
+    and (net33,min_one[1],~alarm_set);
+    and (net34,min_one_set[1],alarm_set);
+    or  (min_one_instant[1],net33,net34);
+    
+    and (net35,min_one[2],~alarm_set);
+    and (net36,min_one_set[2],alarm_set);
+    or  (min_one_instant[2],net35,net36);
+    
+    and (net37,min_one[3],~alarm_set);
+    and (net38,min_one_set[3],alarm_set);
+    or  (min_one_instant[3],net37,net38);
+    
+    /* second instantiation */
+    and (net40,sec_ten[0],~alarm_set);
+    and (net41,sec_ten_set[0],alarm_set);
+    or  (sec_ten_instant[0],net40,net41);
+    
+    and (net42,sec_ten[1],~alarm_set);
+    and (net43,sec_ten_set[1],alarm_set);
+    or  (sec_ten_instant[1],net42,net43);
+    
+    and (net44,sec_ten[2],~alarm_set);
+    and (net45,sec_ten_set[2],alarm_set);
+    or  (sec_ten_instant[2],net44,net45);
+    
+    and (net46,sec_one[0],~alarm_set);
+    and (net47,sec_one_set[0],alarm_set);
+    or  (sec_one_instant[0],net46,net47);
+    
+    and (net48,sec_one[1],~alarm_set);
+    and (net49,sec_one_set[1],alarm_set);
+    or  (sec_one_instant[1],net48,net49);
+    
+    and (net50,sec_one[2],~alarm_set);
+    and (net51,sec_one_set[2],alarm_set);
+    or  (sec_one_instant[2],net50,net51);
+    
+    and (net52,sec_one[3],~alarm_set);
+    and (net53,sec_one_set[3],alarm_set);
+    or  (sec_one_instant[3],net52,net53);
+    
+    or (net60,ring_in,close);
+    T_FF inst76 (data_TT,net60,preset,clear,ring);
+    
+endmodule 

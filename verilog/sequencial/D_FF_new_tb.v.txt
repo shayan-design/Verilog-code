@@ -1,0 +1,37 @@
+`timescale 1ns / 1ps
+
+module D_flop_tb();
+    
+    reg D,clk,preset,clear;
+    wire Q,Q_not;
+    
+    D_flop dut(D,clk,preset,clear,Q,Q_not);
+    
+    initial
+    begin
+      clk = 1'b0;
+      forever
+        #5 clk = ~clk;
+    end
+    
+    initial 
+    begin
+      #10 D = 1'b0; preset = 1'b0; clear =  1'b0;
+      #10 D = 1'b1; preset = 1'b0; clear =  1'b0;
+      #10 D = 1'b0; preset = 1'b0; clear =  1'b0;
+      #10 D = 1'b1; preset = 1'b0; clear =  1'b0;
+      
+      #10 D = 1'b0; preset = 1'b1; clear =  1'b0;
+      #10 D = 1'b1; preset = 1'b0; clear =  1'b1;
+      #10 D = 1'b0; preset = 1'b0; clear =  1'b0;
+      #10 D = 1'b1; preset = 1'b1; clear =  1'b0;
+      
+      #10 D = 1'b0; preset = 1'b0; clear =  1'b1;
+      #10 D = 1'b1; preset = 1'b0; clear =  1'b1;
+      #10 D = 1'b0; preset = 1'b1; clear =  1'b1;
+      #10 D = 1'b1; preset = 1'b1; clear =  1'b0;
+      
+      #10 $stop;
+    end
+    
+endmodule

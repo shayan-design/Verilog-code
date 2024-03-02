@@ -1,0 +1,223 @@
+`timescale 1ns / 1ps
+
+module D_FF_new(
+    input wire D,clk,preset,clear,
+    output reg Q,Qn
+    );
+    
+    initial 
+    begin
+      Q = 0;
+      Qn = 1;
+    end
+    
+    always @ ( clk or preset or clear or D)
+    begin
+      if (clk == 1 && preset == 1 && clear == 0)
+        begin
+          Q <= #2 1;
+          Qn <= #2 0;
+        end
+        
+      else if (clk == 1 && preset == 0 && clear == 1)
+        begin
+          Q <= #2 0;
+          Qn <= #2 1;
+        end
+      else if (clk == 1 && preset == 1 && clear == 1)
+        begin
+          Q <= #2 1'b0;
+          Qn <= #2 1'b1;
+        end
+      else if (clk == 1 && preset == 0 && clear == 0)
+        begin
+          Q <= #2 D;
+          Qn <= #2 ~D;
+        end
+        
+      else if (clk == 0 && preset == 1 && clear == 0)
+        begin
+          Q <= #2 1;
+          Qn <= #2 0;
+        end
+        
+      else if (clk == 0 && preset == 0 && clear == 1)
+        begin
+          Q <= #2 0;
+          Qn <= #2 1;
+        end
+      else if (clk == 0 && preset == 1 && clear == 1)
+        begin
+          Q <= #2 1'b0;
+          Qn <= #2 1'b1;
+        end
+        
+    end
+endmodule
+   
+module D_FF (
+    input D,clk,preset,clear,
+    output Q,Q_not 
+    );
+    
+    wire net1,Qn;
+    D_FF_new master_1 (D,~clk,preset,clear,net1,Qn);
+    D_FF_new slave_1 (net1,clk,preset,clear,Q,Q_not); 
+    
+endmodule
+
+
+module full_adder(
+    input a,b,cin,
+    output sum,carry
+    );
+    
+    assign sum = a^b^cin,
+           carry = ((a^b)&cin)|(a&b);
+     
+endmodule
+
+module eigth_bit (
+    input [7:0] A , B ,
+    output[7:0] sum,
+    output carry
+    );
+    
+    reg cin = 1'b0;
+    wire [7:0] C;
+    
+    full_adder inst0 ( A[0],B[0],cin, sum[0],C[0]);
+    full_adder inst1 ( A[1],B[1],C[0], sum[1],C[1]);
+    full_adder inst2 ( A[2],B[2],C[1], sum[2],C[2]);
+    full_adder inst3 ( A[3],B[3],C[2], sum[3],C[3]);
+    
+    full_adder inst4 ( A[4],B[4],C[3], sum[4],C[4]);
+    full_adder inst5 ( A[5],B[5],C[4], sum[5],C[5]);
+    full_adder inst6 ( A[6],B[6],C[5], sum[6],C[6]);
+    full_adder inst7 ( A[7],B[7],C[6], sum[7],carry);
+    
+endmodule 
+
+module shift_reg(
+    input load,clk,preset,clear,
+    input [3:0] B,
+    output Y
+    );
+    
+    wire [3:0]D;
+    wire [3:0]Q ,Q_not;
+    
+    and (net1,load,B[0]);
+    and (net2,~load,Q[1]);
+    or (D[0],net1,net2);
+    
+    D_FF inst1 (D[0],clk,preset,clear,Y,Q_not[0]);
+    
+    and (net3,load,B[1]);
+    and (net4,~load,Q[2]);
+    or (D[1],net3,net4);
+    
+    D_FF inst2 (D[1],clk,preset,clear,Q[1],Q_not[1]);
+    
+    and (net5,load,B[2]);
+    and (net6,~load,Q[3]);
+    or (D[2],net5,net6);
+    
+    D_FF inst3 (D[2],clk,preset,clear,Q[2],Q_not[2]);
+    
+    and (net7,load,B[3]);
+    and (net8,~load,Y);
+    or (D[3],net7,net8);
+    
+    D_FF inst4 (D[3],clk,preset,clear,Q[3],Q_not[3]);
+    
+endmodule
+
+module SISO (
+    input A,clk,preset,clear,
+    output [3:0] Q,Q_not
+    );
+    
+    
+    D_FF inst4 (A,clk,preset,clear,Q[3],Q_not[3]);
+    D_FF inst5 (Q[3],clk,preset,clear,Q[2],Q_not[2]);
+    D_FF inst6 (Q[2],clk,preset,clear,Q[1],Q_not[1]);
+    D_FF inst7 (Q[1],clk,preset,clear,Q[0],Q_not[0]);
+    
+endmodule
+
+module demux_4x1 (
+    input Y,
+    input [1:0] s,
+    output D0,D1,D2,D3 
+    );
+    
+    and (D0,~s[1],~s[0],Y);
+    and (D1,~s[1],s[0],Y);
+    and (D2,s[1],~s[0],Y);
+    and (D3,s[1],s[0],Y);
+        
+endmodule
+
+module mux_4x1(
+    input [0:3] d,
+    input [1:0] s,
+    output y
+    );
+    and D0 (y0,d[0],~s[1],~s[0]);
+    and D1 (y1,d[1],~s[1],s[0]);
+    and D2 (y2,d[2],s[1],~s[0]);
+    and D3 (y3,d[3],s[1],s[0]);
+    
+    or outp (y,y0,y1,y2,y3);
+endmodule
+
+module booth(
+    input [3:0] A, B,
+    input load,clk,preset,clear,
+    input [1:0] S,
+    output [7:0] M
+    );
+    
+    wire vp,Y,Z,shift_data,net1;
+    wire [3:0] Data;
+    wire D0,D1,D2,D3;
+    wire [3:0] ABCD_not1,ABCD_not2,ABCD_not3,ABCD_not4;
+    wire [3:0] ABCD_1,ABCD_2,ABCD_3,ABCD_4;
+    wire SISO_clk_1,SISO_clk_2,SISO_clk_3,SISO_clk_4;
+    
+    shift_reg inst5 (load,clk,preset,clear,A,Y);
+    
+    and (vp,clk,load);
+    
+    demux_4x1 inst15 ( clk , S ,SISO_clk_1,SISO_clk_2,SISO_clk_3,SISO_clk_4 );
+    
+    D_FF inst7 (Y,clk,preset,clear,shift_data,Q_not);
+    
+    D_FF inst0 (B[0],vp,preset,clear,Data[0],Q_not);
+    D_FF inst1 (B[1],vp,preset,clear,Data[1],Q_not);
+    D_FF inst2 (B[2],vp,preset,clear,Data[2],Q_not);
+    D_FF inst3 (B[3],vp,preset,clear,Data[3],Q_not);
+    
+    mux_4x1 inst6 (Data,S,Z);
+    
+    and (net1,shift_data,Z);
+    
+    demux_4x1 inst8 ( net1, S ,D0,D1,D2,D3 );
+    
+    SISO inst10 (D0,SISO_clk_1,preset,clear, ABCD_1,ABCD_not1);
+    SISO inst11 (D1,SISO_clk_2,preset,clear, ABCD_2,ABCD_not2);
+    SISO inst12 (D2,SISO_clk_3,preset,clear, ABCD_3,ABCD_not3);
+    SISO inst13 (D3,SISO_clk_4,preset,clear, ABCD_4,ABCD_not4);
+    
+    wire [7:0] H_1,H_2;
+    wire [2:0]carry_23;
+    eigth_bit inst25 ({1'b0, ABCD_1[3], ABCD_1[2], ABCD_1[1],ABCD_1[0], 1'b0, 1'b0, 1'b0} ,
+     {1'b0,1'b0, ABCD_2[3], ABCD_2[2], ABCD_2[1],ABCD_2[0], 1'b0, 1'b0} , H_1 ,carry_23[0]);
+     
+    eigth_bit inst26 ({1'b0, 1'b0, 1'b0, ABCD_3[3], ABCD_3[2], ABCD_3[1], ABCD_3[0], 1'b0} ,
+     {1'b0,1'b0, 1'b0, 1'b0, ABCD_4[3], ABCD_4[2], ABCD_4[1],ABCD_4[0]} , H_2 ,carry_23[1]);
+     
+    eigth_bit inst27 (H_1,H_2,M,carry_23[2]);
+   
+endmodule 

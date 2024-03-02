@@ -1,0 +1,48 @@
+`timescale 1ns / 1ps
+
+module shift_reg_tb(
+
+    );
+    
+    reg load,clk,preset,clear;
+    reg [3:0] B;
+    wire Y;
+    
+    shift_reg dut (load,clk,preset,clear,B,Y);
+    
+    initial 
+    begin
+    #0 clk = 1'b0;
+    
+    forever #5 clk = ~clk;
+    end
+    
+    initial 
+    begin
+    #0 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0010;
+    #10 load = 1'b1; preset = 1'b0; clear = 1'b0; B = 4'b0111;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    
+    #10 load = 1'b1; preset = 1'b0; clear = 1'b0; B = 4'b0101;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b1; preset = 1'b0; clear = 1'b0; B = 4'b1001;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b1; preset = 1'b0; clear = 1'b0; B = 4'b0001;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    #10 load = 1'b0; preset = 1'b0; clear = 1'b0; B = 4'b0000;
+    end
+    
+endmodule

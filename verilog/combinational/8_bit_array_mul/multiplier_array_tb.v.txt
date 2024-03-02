@@ -1,0 +1,21 @@
+`timescale 1ns / 1ps
+
+module array_8_bit_mul_tb(
+
+    );
+    
+    reg [7:0] a,b;
+    wire [15:0] prod;
+    
+    array_8_bit_mul dut (a,b,prod);
+    
+    initial 
+    begin
+        for (a = 32; a < 64; a = a + 1)
+        begin
+            for (b = 32; b < 64; b = b + 1)
+              #50;
+        end
+    end 
+    
+endmodule

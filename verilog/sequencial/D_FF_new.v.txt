@@ -1,0 +1,49 @@
+`timescale 1ns / 1ps
+
+module D_FF_new(
+    input wire D,clk,preset,clear,
+    output reg Q,Qn
+    );
+    
+    initial 
+    begin
+      Q = 0;
+      Qn = 1;
+    end
+    
+    always @ ( clk or preset or clear)
+    begin
+      if (clk == 1 && preset == 1 && clear == 0)
+        begin
+          Q <= 1;
+          Qn <= 0;
+        end
+        
+      else if (clk == 1 && preset == 0 && clear == 1)
+        begin
+          Q <= 0;
+          Qn <= 1;
+        end
+      else if (clk == 1 && preset == 1 && clear == 1)
+        begin
+          Q <= 1'b0;
+          Qn <= 1'b1;
+        end
+      else if (clk == 1 && preset == 0 && clear == 0)
+        begin
+          Q <= D;
+          Qn <= ~D;
+        end
+    end
+endmodule
+   
+module D_flop (
+    input D,clk,preset,clear,
+    output Q,Q_not 
+    );
+    
+    wire net1,Qn;
+    D_FF_new master (D,~clk,preset,clear,net1,Qn);
+    D_FF_new slave (net1,clk,preset,clear,Q,Q_not); 
+    
+endmodule

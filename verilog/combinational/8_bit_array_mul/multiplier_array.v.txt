@@ -1,0 +1,166 @@
+`timescale 1ns / 1ps
+
+module half_adder(
+    input a,b,
+    output sum,carry
+    );
+    
+    xor (sum,a,b);
+    and (carry ,a,b);
+    
+endmodule 
+
+module full_adder(
+    input a,b,cin,
+    output sum,carry
+    );
+    
+    assign sum = a^b^cin,
+           carry = ((a^b)&cin)|(a&b);
+    
+    
+endmodule
+
+module array_8_bit_mul(
+    input [7:0] a,b,
+    output [15:0] prod
+    );
+    
+    
+    
+    and col_0 (prod[0],a[0],b[0]);
+    
+    and col_1x0 (net10,a[1],b[0]);
+    and col_1x1 (net01,a[0],b[1]);
+    half_adder inst1 (net10 , net01 , prod[1], carry_0);
+    
+    and col_2x0 (net20,a[2],b[0]);
+    and col_2x1 (net11,a[1],b[1]);
+    full_adder inst2 (net20,net11,carry_0,sum_1,carry_1);
+    and col_2x2 (net02,a[0],b[2]);
+    half_adder inst3 (sum_1,net02,prod[2],carry_2);
+    
+    and col_3x0 (net30,a[3],b[0]);
+    and col_3x1 (net21,a[2],b[1]);
+    full_adder inst4 (net30,net21,carry_1,sum_2,carry_3);
+    and col_3x2 (net12,a[1],b[2]);
+    full_adder inst5 (sum_2,net12,carry_2,sum_3,carry_4);
+    and col_3x3 (net03,a[0],b[3]);
+    half_adder inst6 (sum_3,net03,prod[3],carry_5);
+    
+    and col_4x0 (net40,a[4],b[0]);
+    and col_4x1 (net31,a[3],b[1]);
+    full_adder inst7 (net40,net31,carry_3,sum_4,carry_6);
+    and col_4x2 (net22,a[2],b[2]);
+    full_adder inst8 (sum_4,net22,carry_4,sum_5,carry_7);
+    and col_4x3 (net13,a[1],b[3]);
+    full_adder inst9 (sum_5,net13,carry_5,sum_6,carry_8);
+    and col_4x4 (net04,a[0],b[4]);
+    half_adder inst10 (sum_6,net04,prod[4],carry_9);
+    
+    and col_5x0 (net50,a[5],b[0]);
+    and col_5x1 (net41,a[4],b[1]);
+    full_adder inst11 (net50,net41,carry_6,sum_7,carry_10);
+    and col_5x2 (net32,a[3],b[2]);
+    full_adder inst12 (sum_7,net32,carry_7,sum_8,carry_11);
+    and col_5x3 (net23,a[2],b[3]);
+    full_adder inst13 (sum_8,net23,carry_8,sum_9,carry_12);
+    and col_5x4 (net14,a[1],b[4]);
+    full_adder inst14 (sum_9,net14,carry_9,sum_10,carry_13);
+    and col_5x5 (net05,a[0],b[5]);
+    half_adder inst15 (sum_10,net05,prod[5],carry_14);
+    
+    and col_6x0 (net60,a[6],b[0]);
+    and col_6x1 (net51,a[5],b[1]);
+    full_adder inst16 (net60,net51,carry_10,sum_11,carry_15);
+    and col_6x2 (net42,a[4],b[2]);
+    full_adder inst17 (sum_11,net42,carry_11,sum_12,carry_16);
+    and col_6x3 (net33,a[3],b[3]);
+    full_adder inst18 (sum_12,net33,carry_12,sum_13,carry_17);
+    and col_6x4 (net24,a[2],b[4]);
+    full_adder inst19 (sum_13,net24,carry_13,sum_14,carry_18);
+    and col_6x5 (net15,a[1],b[5]);
+    full_adder inst20 (sum_14,net15,carry_14,sum_15,carry_19);
+    and col_6x6 (net06,a[0],b[6]);
+    half_adder inst21 (sum_15,net06,prod[6],carry_20);
+    
+    and col_7x0 (net70,a[7],b[0]);
+    and col_7x1 (net61,a[6],b[1]);
+    full_adder inst22 (net70,net61,carry_15,sum_16,carry_21);
+    and col_7x2 (net52,a[5],b[2]);
+    full_adder inst23 (sum_16,net52,carry_16,sum_17,carry_22);
+    and col_7x3 (net43,a[4],b[3]);
+    full_adder inst24 (sum_17,net43,carry_17,sum_18,carry_23);
+    and col_7x4 (net34,a[3],b[4]);
+    full_adder inst25 (sum_18,net34,carry_18,sum_19,carry_24);
+    and col_7x5 (net25,a[2],b[5]);
+    full_adder inst26 (sum_19,net25,carry_19,sum_20,carry_25);
+    and col_7x6 (net16,a[1],b[6]);
+    full_adder inst27 (sum_20,net16,carry_20,sum_21,carry_26);
+    and col_7x7 (net07,a[0],b[7]);
+    half_adder inst28 (sum_21,net07,prod[7],carry_27);
+    
+    and col_8x0 (net71,a[7],b[1]);
+    half_adder inst90 (net71,carry_21,sum_22,carry_28);
+    and col_8x1 (net62,a[6],b[2]);
+    full_adder inst29 (sum_22,net62,carry_22,sum_23,carry_29);
+    and col_8x2 (net53,a[5],b[3]);
+    full_adder inst30 (sum_23,net53,carry_23,sum_24,carry_30);
+    and col_8x3 (net44,a[4],b[4]);
+    full_adder inst31 (sum_24,net44,carry_24,sum_25,carry_31);
+    and col_8x4 (net35,a[3],b[5]);
+    full_adder inst32 (sum_25,net35,carry_25,sum_26,carry_32);
+    and col_8x5 (net26,a[2],b[6]);
+    full_adder inst33 (sum_26,net26,carry_26,sum_27,carry_33);
+    and col_8x6 (net17,a[1],b[7]);
+    full_adder inst34 (sum_27,net17,carry_27,prod[8],carry_34);
+    
+    and col_9x0 (net72,a[7],b[2]);
+    full_adder inst91 (net72,carry_28,carry_29,sum_28,carry_35);
+    and col_9x1 (net63,a[6],b[3]);
+    full_adder inst35 (sum_28,net63,carry_30,sum_29,carry_36);
+    and col_9x2 (net54,a[5],b[4]);
+    full_adder inst36 (sum_29,net54,carry_31,sum_30,carry_37);
+    and col_9x3 (net45,a[4],b[5]);
+    full_adder inst37 (sum_30,net45,carry_32,sum_31,carry_38);
+    and col_9x4 (net36,a[3],b[6]);
+    full_adder inst38 (sum_31,net36,carry_33,sum_32,carry_39);
+    and col_9x5 (net27,a[2],b[7]);
+    full_adder inst39 (sum_32,net27,carry_34,prod[9],carry_40);
+    
+    and col_10x0 (net73,a[7],b[3]);
+    full_adder inst40 (net73,carry_35,carry_36,sum_33,carry_41);
+    and col_10x1 (net64,a[6],b[4]);
+    full_adder inst41 (sum_33,net64,carry_37,sum_34,carry_42);
+    and col_10x2 (net55,a[5],b[5]);
+    full_adder inst42 (sum_34,net55,carry_38,sum_35,carry_43);
+    and col_10x3 (net46,a[4],b[6]);
+    full_adder inst43 (sum_35,net46,carry_39,sum_36,carry_44);
+    and col_10x4 (net37,a[3],b[7]);
+    full_adder inst44 (sum_36,net37,carry_40,prod[10],carry_45);
+    
+    and col_11x0 (net74,a[7],b[4]);
+    full_adder inst45 (net74,carry_41,carry_42,sum_37,carry_46);
+    and col_11x1 (net65,a[6],b[5]);
+    full_adder inst46 (sum_37,net65,carry_43,sum_38,carry_47);
+    and col_11x2 (net56,a[5],b[6]);
+    full_adder inst47 (sum_38,net56,carry_44,sum_39,carry_48);
+    and col_11x3 (net47,a[4],b[7]);
+    full_adder inst48 (sum_39,net47,carry_45,prod[11],carry_49);
+    
+    and col_12x0 (net75,a[7],b[5]);
+    full_adder inst49 (net75,carry_46,carry_47,sum_40,carry_50);
+    and col_12x1 (net66,a[6],b[6]);
+    full_adder inst50 (sum_40,net66,carry_48,sum_41,carry_51);
+    and col_12x2 (net57,a[5],b[7]);
+    full_adder inst51 (sum_41,net57,carry_49,prod[12],carry_52);
+    
+    and col_13x0 (net76,a[7],b[6]);
+    full_adder inst52 (net76,carry_50,carry_51,sum_42,carry_53);
+    and col_13x1 (net67,a[6],b[7]);
+    full_adder inst53 (sum_42,net67,carry_52,prod[13],carry_54);
+
+    and col_14x1 (net77,a[7],b[7]);
+    full_adder inst54 (net77,carry_53,carry_54,prod[14],prod[15]);
+    
+endmodule

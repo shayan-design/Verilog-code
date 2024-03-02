@@ -1,0 +1,86 @@
+
+`timescale 1ns / 1ps
+
+module D_FF_new(
+    input wire D,clk,preset,clear,
+    output reg Q,Qn
+    );
+    
+    initial 
+    begin
+      Q = 0;
+      Qn = 1;
+    end
+    
+    always @ ( clk or preset or clear)
+    begin
+      if (clk == 1 && preset == 1 && clear == 0)
+        begin
+          Q <= 1;
+          Qn <= 0;
+        end
+        
+      else if (clk == 1 && preset == 0 && clear == 1)
+        begin
+          Q <= 0;
+          Qn <= 1;
+        end
+      else if (clk == 1 && preset == 1 && clear == 1)
+        begin
+          Q <= 1'b0;
+          Qn <= 1'b1;
+        end
+      else if (clk == 1 && preset == 0 && clear == 0)
+        begin
+          Q <= D;
+          Qn <= ~D;
+        end
+    end
+endmodule
+   
+module D_FF (
+    input D,clk,preset,clear,
+    output Q,Q_not 
+    );
+    
+    wire net1,Qn;
+    D_FF_new master (D,~clk,preset,clear,net1,Qn);
+    D_FF_new slave (net1,clk,preset,clear,Q,Q_not); 
+    
+endmodule
+
+
+module shift_reg(
+    input load,clk,preset,clear,
+    input [3:0] B,
+    output Y
+    );
+    
+    wire [3:0]D;
+    wire [3:0]Q ,Q_not;
+    
+    and (net1,load,B[0]);
+    and (net2,~load,Q[1]);
+    or (D[0],net1,net2);
+    
+    D_FF inst1 (D[0],clk,preset,clear,Y,Q_not[0]);
+    
+    and (net3,load,B[1]);
+    and (net4,~load,Q[2]);
+    or (D[1],net3,net4);
+    
+    D_FF inst2 (D[1],clk,preset,clear,Q[1],Q_not[1]);
+    
+    and (net5,load,B[2]);
+    and (net6,~load,Q[3]);
+    or (D[2],net5,net6);
+    
+    D_FF inst3 (D[2],clk,preset,clear,Q[2],Q_not[2]);
+    
+    and (net7,load,B[3]);
+    and (net8,~load,Y);
+    or (D[3],net7,net8);
+    
+    D_FF inst4 (D[3],clk,preset,clear,Q[3],Q_not[3]);
+    
+endmodule

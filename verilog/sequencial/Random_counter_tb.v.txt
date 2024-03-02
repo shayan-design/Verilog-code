@@ -1,0 +1,22 @@
+`timescale 1ns / 1ps   
+
+module D_flop_tb();
+    
+    reg clk,preset,clear;
+    wire [2:0]Q,Q_not;
+    
+    synchronous_counter dut(clk,preset,clear,
+Q, Q_not
+);
+    
+    initial
+    begin
+      clk = 1'b0;
+      preset = 1'b0;
+      clear = 1'b0;
+      forever
+        #5 clk = ~clk;
+    end
+    
+    
+endmodule

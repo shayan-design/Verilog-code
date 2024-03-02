@@ -1,0 +1,41 @@
+`timescale 1ns / 1ps
+
+module calculator_8bit_tb(
+
+    );
+    
+    reg load,clk,preset,clear;
+    reg [7:0] a,b;
+    reg [1:0] sel;
+    wire [15:0] c_out;
+    wire [7:0] remainder;
+    
+    initial
+    begin
+      #0 clk = 1'b1;
+      forever #5 clk = ~clk; 
+    end
+    
+    calculator_8bit dut (load,clk,preset,clear,a,b,sel,c_out,remainder);
+    
+    initial 
+    begin
+      #0 a = 8'h76; b = 8'h54; sel = 2'b00;  load = 1'b1; preset = 1'b0; clear = 1'b0;
+      #10 a = 8'h76; b = 8'h54; sel = 2'b01; load = 1'b0;
+      #10 a = 8'h76; b = 8'h54; sel = 2'b00;
+      #10 a = 8'h76; b = 8'h54; sel = 2'b10;
+      
+      #10 a = 8'h67; b = 8'h45; sel = 2'b01;
+      #10 a = 8'h67; b = 8'h45; sel = 2'b01;
+      #10 a = 8'h67; b = 8'h45; sel = 2'b11;
+      #10 a = 8'h67; b = 8'h45; sel = 2'b10;
+      
+      #10 a = 8'h67; b = 8'h45; sel = 2'b01;
+      #10 a = 8'h67; b = 8'h45; sel = 2'b01;
+      #10 a = 8'h67; b = 8'h45; sel = 2'b11;
+      #10 a = 8'h67; b = 8'h45; sel = 2'b00;
+      
+      #10 $stop;
+    end
+    
+endmodule

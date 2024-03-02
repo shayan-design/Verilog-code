@@ -1,0 +1,122 @@
+`timescale 1ns / 1ps  
+
+module D_FF_new(
+    input wire D,clk,preset,clear,
+    output reg Q,Qn
+    );
+    
+    initial 
+    begin
+      Q = 0;
+      Qn = 1;
+    end
+    
+    always @ ( clk or preset or clear or D)
+    begin
+      if (clk == 1 && preset == 1 && clear == 0)
+        begin
+          Q <= #2 1;
+          Qn <= #2 0;
+        end
+        
+      else if (clk == 1 && preset == 0 && clear == 1)
+        begin
+          Q <= #2 0;
+          Qn <= #2 1;
+        end
+      else if (clk == 1 && preset == 1 && clear == 1)
+        begin
+          Q <= #2 1'b0;
+          Qn <= #2 1'b1;
+        end
+      else if (clk == 1 && preset == 0 && clear == 0)
+        begin
+          Q <= #2 D;
+          Qn <= #2 ~D;
+        end
+        
+      else if (clk == 0 && preset == 1 && clear == 0)
+        begin
+          Q <= #2 1;
+          Qn <= #2 0;
+        end
+        
+      else if (clk == 0 && preset == 0 && clear == 1)
+        begin
+          Q <= #2 0;
+          Qn <= #2 1;
+        end
+      else if (clk == 0 && preset == 1 && clear == 1)
+        begin
+          Q <= #2 1'b0;
+          Qn <= #2 1'b1;
+        end
+        
+    end
+endmodule
+   
+module D_FF (
+    input D,clk,preset,clear,
+    output Q,Q_not 
+    );
+    
+    wire net1,Qn;
+    D_FF_new master_1 (D,~clk,preset,clear,net1,Qn);
+    D_FF_new slave_1 (net1,clk,preset,clear,Q,Q_not); 
+    
+endmodule
+
+
+module DAD_FF (
+    input clk,preset,clear,clk_1,
+    input xyz,
+    output [3:0] Q,Q_not
+);
+
+    wire [3:0] D;
+    wire D0,D1,D2,D3;
+    
+    assign D[0] = (Q[3]&~Q[0]) | (~Q[3]&~Q[2]&Q[0]) | (Q[2]&Q[1]&~Q[0]),
+           D[1] = (Q[1]&Q[0]) | (~Q[3]&~Q[2]&Q[1]) | (Q[3]&~Q[0]),
+           D[2] = (Q[3]&Q[0]) | (~Q[1]&Q[2]&~Q[0]),
+           D[3] = (Q[3]) | (Q[2]&Q[0]) | (Q[2]&Q[1]);
+           
+    and #1 (net1,D[0],clk_1);
+    and #1 (net2,xyz,~clk_1);
+    or #1 (D0,net1,net2);
+    
+    and #1 (net3,D[1],clk_1);
+    and #1 (net4,Q[0],~clk_1);
+    or #1 (D1,net3,net4);
+    
+    and #1 (net5,D[2],clk_1);
+    and #1 (net6,Q[1],~clk_1);
+    or #1 (D2,net5,net6);
+    
+    and #1 (net7,D[3],clk_1);
+    and #1 (net8,Q[2],~clk_1);
+    or #1 (D3,net7,net8);
+           
+    D_FF  inst1 (D0,clk,preset,clear,Q[0],Q_not[0]);
+    D_FF  inst2 (D1,clk,preset,clear,Q[1],Q_not[1]);
+    D_FF  inst3 (D2,clk,preset,clear,Q[2],Q_not[2]);
+    D_FF  inst4 (D3,clk,preset,clear,Q[3],Q_not[3]);
+    
+endmodule
+
+module DDA_FF (
+    input clk,preset,clear,clk_1,enable,
+    input xyz,
+    output [3:0] Q_ones,Q_not_ones,
+    output [3:0] Q_tens,Q_not_tens,
+    output [3:0] Q_hunds,Q_not_hunds);
+    
+    wire net1;
+    
+    and (net1,clk,~enable);
+    
+    DAD_FF BCD_ones (net1,preset,clear,clk_1,xyz,Q_ones,Q_not_ones);
+    DAD_FF BCD_tens (net1,preset,clear,clk_1,Q_ones[3],Q_tens,Q_not_tens);
+    DAD_FF BCD_hunds (net1,preset,clear,clk_1,Q_tens[3],Q_hunds,Q_not_hunds);
+    
+endmodule

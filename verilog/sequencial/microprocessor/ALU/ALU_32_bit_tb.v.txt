@@ -1,0 +1,69 @@
+`timescale 1ns / 1ps
+
+module ALU_tb(
+
+    );
+    
+        
+    reg [31:0] a,b;
+    reg clk,preset,clear,Trig;
+    reg [3:0] sel;
+    wire equal_flag, greater_flag, smaller_flag;
+    wire [31:0] value;
+    
+    ALU dut (a,b,clk,preset,clear,Trig,sel,equal_flag, greater_flag, smaller_flag,value ); 
+    
+    initial
+    begin
+      clk = 1'b0;
+        forever #5 clk = ~clk;
+    end
+   
+    initial
+    begin
+    
+    #0 a = 32'hcdcd_4322; b = 32'h0000_0042; preset = 1'b0; clear = 1'b0; sel = 4'b0000; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #0 a = 32'hcdcd_4322; b = 32'hcdcd_4322; preset = 1'b0; clear = 1'b0; sel = 4'b0001; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+   
+    #0 a = 32'hcdcd_4322; b = 32'hcdcd_4323; preset = 1'b0; clear = 1'b0; sel = 4'b0010; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #0 a = 32'hcdcd_4322; b = 32'h0000_0042; preset = 1'b0; clear = 1'b0; sel = 4'b0011; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #0 a = 32'h0000_ff22; b = 32'h0000_0024; preset = 1'b0; clear = 1'b0; sel = 4'b0011; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #0 a = 32'h0000_f022; b = 32'h0000_0124; preset = 1'b0; clear = 1'b0; sel = 4'b0100; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #0 a = 32'h0000_ddd2; b = 32'h0000_0194; preset = 1'b0; clear = 1'b0; sel = 4'b1100; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #0 a = 32'h0000_ddd2; b = 32'h0000_0194; preset = 1'b0; clear = 1'b0; sel = 4'b1101; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #0 a = 32'h0000_ddd2; b = 32'h0000_0194; preset = 1'b0; clear = 1'b0; sel = 4'b1110; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #0 a = 32'h0000_ddd2; b = 32'h0000_0194; preset = 1'b0; clear = 1'b0; sel = 4'b1001; Trig = 1'b1;
+    #10 Trig = 1'b0;
+    #300;
+    
+    #10 $stop;
+    
+    end
+    
+endmodule

@@ -1,0 +1,13 @@
+`timescale 1ns / 1ps
+
+module gray(
+    input x1,x2,x3,x4,
+    output y1,y2,y3,y4
+    );
+    
+    buf (y1,x1);
+    xor (y2,x1,x2);
+    xor (y3,x2,x3);
+    xor (y4,x3,x4);
+    
+endmodule

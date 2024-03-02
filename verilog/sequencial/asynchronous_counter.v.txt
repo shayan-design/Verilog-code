@@ -1,0 +1,74 @@
+`timescale 1ns / 1ps
+
+module D_FF_new(
+    input wire D,clk,preset,clear,
+    output reg Q,Qn
+    );
+    
+    initial 
+    begin
+      Q = 0;
+      Qn = 1;
+    end
+    
+    always @ ( clk or preset or clear)
+    begin
+      if (clk == 1 && preset == 1 && clear == 0)
+        begin
+          Q <= #2 1;
+          Qn <= #2 0;
+        end
+        
+      else if (clk == 1 && preset == 0 && clear == 1)
+        begin
+          Q <= #2 0;
+          Qn <= #2 1;
+        end
+      else if (clk == 1 && preset == 1 && clear == 1)
+        begin
+          Q <= #2 1'b0;
+          Qn <= #2 1'b1;
+        end
+      else if (clk == 1 && preset == 0 && clear == 0)
+        begin
+          Q <= #2 D;
+          Qn <= #2 ~D;
+        end
+    end
+endmodule
+   
+module D_flop (
+    input D,clk,preset,clear,
+    output Q,Q_not 
+    );
+    
+    wire net1,Qn;
+    D_FF_new master (D,~clk,preset,clear,net1,Qn);
+    D_FF_new slave (net1,clk,preset,clear,Q,Q_not); 
+    
+endmodule
+
+module T_FF (
+    input T,clk,preset,clear,
+    output Q,Q_not
+    );
+    
+    wire D; 
+    xor (D,T,Q);
+    
+    D_flop inst6 (D,clk,preset,clear,Q,Q_not);
+    
+endmodule
+
+module mod_counter (
+    input T,preset,clear,
+    input clk,
+    output [3:0] Q,Q_not
+    );
+    
+     T_FF Q0 (T,clk,preset,clear,Q[0],Q_not[0]);
+     T_FF Q1 (T,Q_not[0],preset,clear,Q[1],Q_not[1]);
+     T_FF Q2 (T,Q_not[1],preset,clear,Q[2],Q_not[2]);
+     T_FF Q3 (T,Q_not[2],preset,clear,Q[3],Q_not[3]);
+    
+endmodule

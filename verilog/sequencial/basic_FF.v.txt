@@ -1,0 +1,59 @@
+`timescale 1ns / 1ps
+
+module D_latch_pos(
+    input D,clk,
+    output Q,Q_not
+    );
+    
+    buf  (S,D);
+    not  (R,D);
+    
+    nand  (net1,S,clk);
+    nand  (net2,R,clk);
+    nand  (Q,net1,Q_not);
+    nand  (Q_not,net2,Q);      
+    
+endmodule
+
+module D_latch_neg(
+    input D,clk,
+    output Q,Q_not
+    );
+    
+    buf  (S,D);
+    not  (R,D);
+    
+    nand  (net1,S,~clk);
+    nand  (net2,R,~clk);
+    nand  (Q,net1,Q_not);
+    nand  (Q_not,net2,Q);      
+    
+endmodule
+
+
+module D_FF(
+    input D,clk,
+    output Q,Q_not
+    );
+    
+    D_latch_neg inst1 (D,clk,net1,net2); 
+    D_latch_pos inst2 (net1,clk,Q,Q_not);
+    
+endmodule
+
+module JK_FF(
+    input J,K,clk,
+    output Q,Q_not
+    );
+    
+    wire net1,net2,net3;
+    
+    and (net1,Q,~K);
+    and (net2,Q_not,J);
+    or (net3,net1,net2);
+    
+    D_FF comb_seq (net3,clk,Q,Q_not);
+    
+endmodule      
+
+

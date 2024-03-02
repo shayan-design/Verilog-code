@@ -1,0 +1,77 @@
+`timescale 1ns / 1ps
+
+module booth_tb(
+
+    );
+    
+    reg [3:0] A, B;
+    reg load,clk,preset,clear;
+    reg [1:0] S;
+    wire [7:0] M;
+    
+    booth dut (A,B,load,clk,preset,clear,S,M);
+    
+    initial 
+    begin
+    #0 clk =  1'b0;
+    forever #5 clk = ~clk;
+    end
+    
+    initial 
+    begin
+      #0 A = 4'b0000; B =4'b0000; load = 1'b0; preset = 1'b0; clear = 1'b0; S = 2'b00;
+      #10 A = 4'b1111; B = 4'b1111; load = 1'b1;
+      #10 A = 4'b1000; B = 4'b0001; load = 1'b0; 
+      #10 ; 
+      #10 ; 
+      #10 ;
+      #10 ;
+      
+      #10 A = 4'b1000; B = 4'b0100; load = 1'b0; S = 2'b01;
+      #10 ;
+      #10 ;
+      #10 ;
+       
+      
+      #10 A = 4'b1000; B = 4'b0011; load = 1'b0; S = 2'b10;
+      #10 ;
+      #10 ;
+      #10 ;
+      
+      
+      #10 A = 4'b1000; B = 4'b0111; load = 1'b0; S = 2'b11;  
+      #10 ;  
+      #10 ;  
+      #10 ;  
+      #10 ;
+      
+      #10 A = 4'b0000; B =4'b0000; load = 1'b0; preset = 1'b0; clear = 1'b1; S = 2'b00;
+      #10 A = 4'b1111; B = 4'b1111; load = 1'b1; clear = 1'b0;
+      #10 A = 4'b1000; B = 4'b0001; load = 1'b0; 
+      #10 ; 
+      #10 ; 
+      #10 ;
+      #10 ;
+      
+      #10 A = 4'b1000; B = 4'b0100; load = 1'b0; S = 2'b01;
+      #10 ;
+      #10 ;
+      #10 ;
+       
+      
+      #10 A = 4'b1000; B = 4'b0011; load = 1'b0; S = 2'b10;
+      #10 ;
+      #10 ;
+      #10 ;
+      
+      
+      #10 A = 4'b1000; B = 4'b0111; load = 1'b0; S = 2'b11;  
+      #10 ;  
+      #10 ;  
+      #10 ;  
+      #10 ;
+
+      #2 $stop;
+    end
+    
+endmodule

@@ -1,0 +1,30 @@
+`timescale 1ns / 1ps
+
+module full_adder(
+    input a,b,cin,
+    output sum,carry
+    );
+    
+    assign sum = a^b^cin,
+           carry = ((a^b)&cin)|(a&b);
+           
+endmodule
+
+module sub_8bit_bh (a, b, rslt);
+
+    input [7:0] a, b;
+    output [7:0] rslt;
+    
+    reg cin = 1'b1;
+    
+    full_adder inst0 (a[0],~b[0],cin,rslt[0],carry_0);
+    full_adder inst1 (a[1],~b[1],carry_0,rslt[1],carry_1);
+    full_adder inst2 (a[2],~b[2],carry_1,rslt[2],carry_2);
+    full_adder inst3 (a[3],~b[3],carry_2,rslt[3],carry_3);
+    
+    full_adder inst4 (a[4],~b[4],carry_3,rslt[4],carry_4);
+    full_adder inst5 (a[5],~b[5],carry_4,rslt[5],carry_5);
+    full_adder inst6 (a[6],~b[6],carry_5,rslt[6],carry_6);
+    full_adder inst7 (a[7],~b[7],carry_6,rslt[7],carry_7);
+    
+endmodule

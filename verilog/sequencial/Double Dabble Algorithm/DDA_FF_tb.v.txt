@@ -1,0 +1,69 @@
+`timescale 1ns / 1ps   
+
+module D_flop_tb();
+    
+    reg clk,preset,clear,clk_1,xyz,enable;
+    wire [3:0]Q_ones,Q_not_ones;
+    wire [3:0]Q_tens,Q_not_tens;
+    wire [3:0]Q_hunds,Q_not_hunds;
+    
+    DDA_FF dut(clk,preset,clear,clk_1,enable,xyz,Q_ones,Q_not_ones,Q_tens,Q_not_tens,Q_hunds,Q_not_hunds);
+    
+    initial
+    begin
+      clk = 1'b0; 
+      clear = 1'b0;
+      forever
+        #5 clk = ~clk;
+    end
+    
+    initial
+    begin
+      #0  clk_1 = 1'b0; 
+    
+      forever
+        #10 clk_1 = ~clk_1;
+    end
+    
+    initial
+    begin
+    
+    #0 preset = 1'b0; enable = 1'b0; 
+    
+        xyz = 1; // initiate B[9] of sequence bit
+    #10 xyz = 0; 
+    
+    #10 xyz = 1; // initiate B[8] of sequence bit
+    #10 xyz = 0; 
+    
+    #10 xyz = 1; // initiate B[7] of sequence bit
+    #10 xyz = 0; 
+        
+    #10 xyz = 0; // initiate B[6] of sequence bit
+    #10 xyz = 0; 
+    
+    #10 xyz = 1; // initiate B[5] of sequence bit
+    #10 xyz = 0; 
+    
+    #10 xyz = 1; // initiate B[4] of sequence bit
+    #10 xyz = 0;
+    
+    #10 xyz = 1; // initiate B[3] of sequence bit
+    #10 xyz = 0; 
+    
+    #10 xyz = 0; // initiate B[2] of sequence bit
+    #10 xyz = 0;
+    
+    #10 xyz = 0; // initiate B[1] of sequence bit
+    #10 xyz = 0; 
+    
+    #10 xyz = 1; // initiate B[0] of sequence bit__ limit of sequence bit
+    #10 xyz = 0;
+    
+    #5 enable = 1'b1;
+    
+    #20 $stop;
+    end
+    
+    
+endmodule

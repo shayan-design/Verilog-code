@@ -1,0 +1,45 @@
+`timescale 1ns / 1ps
+
+module D_FF_tb(
+
+    );
+    
+    reg D,clk,reset,clear;
+    wire Q,Q_not;
+    
+    
+    D_FF_full dut (D,clk,reset,clear,Q,Q_not);
+    
+    initial
+    begin
+      clk = 1'b0;
+      forever
+        #5 clk = ~clk;
+    end
+    
+    initial 
+    begin
+      
+      #10 {D,reset,clear} = 3'b000 ;
+      #10 {D,reset,clear} = 3'b100 ;
+      #10 {D,reset,clear} = 3'b000 ;
+      #10 {D,reset,clear} = 3'b000 ;
+      #10 {D,reset,clear} = 3'b100 ;
+      
+      #10 {D,reset,clear} = 3'b010 ;
+      #10 {D,reset,clear} = 3'b001 ;
+      
+      #10 {D,reset,clear} = 3'b110 ;
+      #10 {D,reset,clear} = 3'b101 ;
+      #10 {D,reset,clear} = 3'b110 ;
+      #10 {D,reset,clear} = 3'b001 ;
+      
+      #10 {D,reset,clear} = 3'b011 ;
+      #10 {D,reset,clear} = 3'b011 ;
+      #10 {D,reset,clear} = 3'b111 ;
+      #10 {D,reset,clear} = 3'b111 ;
+      
+      #10 $stop;
+    end
+    
+endmodule
