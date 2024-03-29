@@ -1,0 +1,54 @@
+`timescale 1ns / 1ps
+
+module RAM_tb(
+
+    );
+    
+    
+    reg [7:0] address;
+    reg [23:0] Data_in;
+    reg Read_Enable, Write_Enable;
+    wire [23:0] Data;
+    
+    RAM dut (address,Data_in, Read_Enable, Write_Enable,Data);
+    
+    initial 
+    begin
+      #0 address = 8'h45; Data_in = 24'h76_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h45; Data_in = 24'h76_5324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h32; Data_in = 24'h7f_c324; Read_Enable = 1'b0 ; Write_Enable = 1'b0;
+      #10 address = 8'h32; Data_in = 24'h76_5324; Read_Enable = 1'b1 ; Write_Enable = 1'b0; 
+      
+      #10 address = 8'h76; Data_in = 24'h86_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h98; Data_in = 24'h86_5324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h32; Data_in = 24'h7f_c324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h32; Data_in = 24'h76_5324; Read_Enable = 1'b1 ; Write_Enable = 1'b0; 
+      
+      #10 address = 8'h45; Data_in = 24'h70_0324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h44; Data_in = 24'h70_0324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h76; Data_in = 24'h86_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      
+      #10 address = 8'h00; Data_in = 24'h98_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h01; Data_in = 24'hcc_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h02; Data_in = 24'h22_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h03; Data_in = 24'h22_9324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      
+      #10 address = 8'h04; Data_in = 24'h00_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h05; Data_in = 24'h01_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h06; Data_in = 24'h02_5324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      #10 address = 8'h07; Data_in = 24'h12_9324; Read_Enable = 1'b0 ; Write_Enable = 1'b1;
+      
+      #10 address = 8'h00; Data_in = 24'h12_9324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h01; Data_in = 24'h12_9324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h02; Data_in = 24'h12_9324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h03; Data_in = 24'h12_9324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      
+      #10 address = 8'h04; Data_in = 24'h12_9324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h05; Data_in = 24'h12_9324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h06; Data_in = 24'h12_9324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      #10 address = 8'h07; Data_in = 24'h12_9324; Read_Enable = 1'b1 ; Write_Enable = 1'b0;
+      
+      #10 $stop;
+    end
+    
+endmodule
