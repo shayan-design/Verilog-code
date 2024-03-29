@@ -1,0 +1,47 @@
+`timescale 1ns / 1ps
+
+module RAM_tb(
+
+    );
+    
+    
+    reg [7:0] jump_adds_data;
+    reg L, E, G ;
+    reg s2, s1, s0;
+    reg jump;
+    reg clk, preset, clear;
+    wire [7:0] address_output; 
+
+    
+    program_counter dut (jump_adds_data, L, E, G, s2, s1, s0, jump, clk, preset, clear, address_output );
+    
+    initial
+    begin
+    #0 clk = 1'b0;
+    forever #5 clk = ~clk; 
+    end
+    
+    
+    initial 
+      begin: apply_stimulus
+      
+        reg [5:0] i; //invect[4] terminates the loop
+        for (i = 0; i < 64; i = i + 1)
+
+          begin
+            {L, E, G, s2, s1, s0} = i[5:0];
+            #10 ;
+          end
+        
+      #10 $stop;  
+      end
+    
+    
+    
+    initial
+    begin
+    
+    #0 jump_adds_data = 8'h76; jump = 1'b0; preset = 1'b0; clear = 1'b0;
+    end 
+    
+endmodule

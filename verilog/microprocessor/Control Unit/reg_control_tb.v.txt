@@ -1,0 +1,48 @@
+`timescale 1ns / 1ps
+
+module RAM_tb(
+
+    );
+    
+
+    wire [15:0] reg_data_16bit;
+    reg [31:0] reg_data_in;    // input
+    wire sel_sta;
+    wire reg_D;
+    wire [2:0] reg_data_sel;
+    wire [1:0] reg_data_sel_in;
+    
+    reg [15:0] Ram_data;      // input
+    wire [15:0] Ram_data_in;
+    wire Read_Enable, Write_Enable;
+    
+    reg [7:0] Mne_control_I;    // input
+    
+    wire Trig;
+
+    reg_control dut (reg_data_16bit, reg_data_in, sel_sta, reg_D, reg_data_sel, reg_data_sel_in, Ram_data, Ram_data_in,
+                Read_Enable, Write_Enable, Mne_control_I, Trig);
+                
+    initial
+    begin
+      #0 reg_data_in = 32'h9990_8800; Ram_data = 16'h9896; Mne_control_I = 8'b0000_0011;
+      #10 Mne_control_I = 8'b0000_0111;
+      
+      #10 Mne_control_I = 8'b0011_0111;
+      
+      #10 reg_data_in = 32'h9880_8800; Ram_data = 16'h9896; Mne_control_I = 8'b0000_0001;
+      #10 Mne_control_I = 8'b0000_0101;
+      
+      #10 reg_data_in = 32'h9880_8800; Ram_data = 16'h9896; Mne_control_I = 8'b0011_0001;
+      #10 Mne_control_I = 8'b0011_0011;
+      #10 Mne_control_I = 8'b0111_0011;
+      
+      #10 Mne_control_I = 8'b0001_0011;
+      #10 Mne_control_I = 8'b1111_1011;
+      
+      #10 Mne_control_I = 8'b0010_1101;
+      
+      #10 $stop;
+    end
+    
+endmodule

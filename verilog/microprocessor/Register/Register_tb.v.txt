@@ -1,0 +1,45 @@
+`timescale 1ns / 1ps
+
+module RAM_tb(
+
+    );
+    
+
+    reg [15:0] reg_data_16bit;
+    reg [31:0] alu_32bit_input;
+    reg ready_flag;
+    reg [2:0] reg_data_sel;
+    reg reg_D;
+    reg [1:0] reg_data_sel_in;
+    wire [31:0] register_A1, register_B1, register_C1, register_D1;
+    wire [31:0] reg_data_in;
+    
+    register dut ( reg_data_16bit, alu_32bit_input, ready_flag, reg_data_sel,reg_D, reg_data_sel_in, register_A1, register_B1, register_C1, register_D1,reg_data_in);
+    
+    initial
+    begin
+      #0 reg_data_16bit = 16'h9898; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b000; reg_D = 1'b1; reg_data_sel_in = 2'b11;
+      #10 reg_data_16bit = 16'h9778; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b001; reg_D = 1'b1; reg_data_sel_in = 2'b11;
+      #10 reg_data_16bit = 16'h1234; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b010; reg_D = 1'b1; reg_data_sel_in = 2'b11;
+      #10 reg_data_16bit = 16'h4321; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b011; reg_D = 1'b1; reg_data_sel_in = 2'b11;
+      
+      #10 reg_data_16bit = 16'h9898; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b0; reg_data_sel = 3'b100; reg_D = 1'b1; reg_data_sel_in = 2'b10;
+      #10 reg_data_16bit = 16'h9778; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b101; reg_D = 1'b1; reg_data_sel_in = 2'b10;
+      #10 reg_data_16bit = 16'h1234; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b110; reg_D = 1'b1; reg_data_sel_in = 2'b10;
+      #10 reg_data_16bit = 16'h4321; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b111; reg_D = 1'b1; reg_data_sel_in = 2'b10;
+      
+      
+      #10 reg_data_16bit = 16'hffff; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b000; reg_D = 1'b1; reg_data_sel_in = 2'b00;
+      #10 reg_data_16bit = 16'h3333; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b001; reg_D = 1'b1; reg_data_sel_in = 2'b00;
+      #10 reg_data_16bit = 16'h9999; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b010; reg_D = 1'b1; reg_data_sel_in = 2'b00;
+      #10 reg_data_16bit = 16'h4004; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b011; reg_D = 1'b1; reg_data_sel_in = 2'b00;
+      
+      #10 reg_data_16bit = 16'h8085; alu_32bit_input = 32'hffff_ffff; ready_flag = 1'b0; reg_data_sel = 3'b100; reg_D = 1'b1; reg_data_sel_in = 2'b01;
+      #10 reg_data_16bit = 16'h7600; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b101; reg_D = 1'b1; reg_data_sel_in = 2'b01;
+      #10 reg_data_16bit = 16'h4500; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b110; reg_D = 1'b1; reg_data_sel_in = 2'b01;
+      #10 reg_data_16bit = 16'h2223; alu_32bit_input = 32'h5400_3433; ready_flag = 1'b1; reg_data_sel = 3'b111; reg_D = 1'b1; reg_data_sel_in = 2'b01;
+      
+      #10 $stop;
+    end
+    
+endmodule
